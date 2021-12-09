@@ -97,6 +97,7 @@ class ProductsController extends AppController
 
                 return $this->redirect(['action' => 'index']);
 
+
             }
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
