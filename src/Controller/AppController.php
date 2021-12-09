@@ -46,10 +46,54 @@ class AppController extends Controller
         ]);
         $this->loadComponent('Flash');
 
+        $this->loadComponent('Auth', [
+            'authorize' => 'Controller',
+            'authenticate' => [
+                'Form'=>[
+                    'fields'=>['username'=>'email', 'password'=>'password'],
+                    'scope'=>['verified'=>'1'],
+                    'userModel'=> 'Users'
+                ]
+            ],
+            'loginRedirect' => [
+                'controller' => 'Home',
+                'action' => 'index'
+            ],
+            'logoutRedirect' => [
+                'controller' => 'Users',
+                'action' => 'login',
+            ],
+            'storage'=>'Session',
+        ]);
+
+        $user_role = $this->Auth->user('role');
+        $user_id = $this->Auth->user('id');
+
+        $this->set(compact('user_role','user_id'));
+
+        $this->loadModel('Admin.Categories');
+        $menulists = $this->Categories->find('all');
+        $this->set(compact('menulists'));
         /*
          * Enable the following component for recommended CakePHP security settings.
          * see https://book.cakephp.org/3/en/controllers/components/security.html
          */
         //$this->loadComponent('Security');
+    }
+    public function beforeFilter(Event $event)
+    {
+        $this->Auth->deny(['index']);
+
+//        $this->Auth->allow(['verification','logout','register','forgotpassword','resetpassword','index','add','view']);
+    }
+
+    public function isAuthorized($user)
+    {
+        if (!$this->request->getParam('prefix')) {
+            return true;
+        }
+        if ($this->request->getParam('plugin')) {
+            return false;
+        }
     }
 }

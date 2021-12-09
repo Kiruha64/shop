@@ -18,6 +18,8 @@
  */
 require __DIR__ . '/paths.php';
 
+
+
 /*
  * Bootstrap CakePHP.
  *

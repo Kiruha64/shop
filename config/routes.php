@@ -51,6 +51,8 @@ Router::scope('/', function (RouteBuilder $routes) {
         'httpOnly' => true,
     ]));
 
+    $routes->loadPlugin('Admin');
+
     /*
      * Apply a middleware to the current route scope.
      * Requires middleware to be registered through `Application::routes()` with `registerMiddleware()`
@@ -62,7 +64,7 @@ Router::scope('/', function (RouteBuilder $routes) {
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, src/Template/Pages/home.ctp)...
      */
-    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+    $routes->connect('/', ['controller' => 'Home', 'action' => 'index']);
 
     /*
      * ...and connect the rest of 'Pages' controller's URLs.
