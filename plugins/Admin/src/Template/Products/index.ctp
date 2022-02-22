@@ -30,6 +30,7 @@
                 <input type="search" name="search" class="form-control">
                 <div class="input-group-prepend">
                     <button class="btn btn-primary input-group-text"type="submit">Search</button>
+<!--                    --><?//= $this->form->control('search')?>
                 </div>
             </div>
         </form>
@@ -46,6 +47,7 @@
         <th scope="col"><?= $this->Paginator->sort('id') ?></th>
         <th scope="col"><?= $this->Paginator->sort('name') ?></th>
         <th scope="col"><?= $this->Paginator->sort('category_id') ?></th>
+        <th scope="col"><?= $this->Paginator->sort('typecategory_id') ?></th>
         <th scope="col"><?= $this->Paginator->sort('price') ?></th>
 
         <th scope="col"><?= $this->Paginator->sort('isset') ?></th>
@@ -64,7 +66,8 @@
             <td><?= $this->Number->format($product->id) ?></td>
             <td><?= h($product->name) ?></td>
             <td><?= $this->Html->link($product->category->name, ['controller' => 'Categories', 'action' => 'view', $product->category->id])  ?></td>
-            <td><?= h($product->price) ?></td>
+            <td><?= $this->Html->link($product->typecategory->name, ['controller' => 'Typecategories', 'action' => 'view', $product->typecategory->id])  ?></td>
+            <td><?= h($product->price)?></td>
             <td><?= $this->Number->format($product->isset) ?></td>
 
             <td><?= h($product->img_name) ?></td>
@@ -87,3 +90,49 @@
 
 
 
+<script>
+
+    //$('document').ready(function(){
+    //    $('#search').keyup(function(){
+    //        var searchkey = $(this).val();
+    //        searchCategories(searchkey);
+    //    });
+    //
+    //    function searchCategories(keyword){
+    //        var data = keyword;
+    //        console.log(data)
+    //        $.ajax({
+    //            method: 'get',
+    //            url : "<?//= $this->Url->build(["controller"=>"Products","action"=>"search",'plugin'=>'admin']); ?>//",
+    //            data: {keyword:data},
+    //            success: function(response)
+    //            {
+    //                $('.table').html(response);
+    //                console.log(data);
+    //                console.log(response);
+    //            }
+    //            // success: function()
+    //            // {
+    //            //     console.log(data);
+    //            // }
+    //        });
+    //    };
+    //});
+    //$(document).ready(function (){
+    //    $("#search").keyup(function (){
+    //        var searchkey = $(this).val();
+    //        searchCategories(searchkey);
+    //    })
+    //    function searchCategories(keyword){
+    //        var data = keyword;
+    //        $.ajax({
+    //            method:'get',
+    //            url: "<?//= $this->Url->build(['controller'=>'categories','action'=>'search','plugin'=>'admin']); ?>//" ,
+    //            data:keyword,
+    //            success: function (response){
+    //                console.log(response)
+    //            }
+    //        })
+    //    }
+    //})
+</script>

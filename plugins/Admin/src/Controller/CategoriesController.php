@@ -28,7 +28,7 @@ class CategoriesController extends AppController
 
     public function index()
     {
-        $categories = $this->paginate($this->Categories);
+        $categories = $this->paginate($this->Categories->find('all')->where(['user_id'=> $this->Auth->user('id')]));
 
         $this->set(compact('categories'));
     }
@@ -59,6 +59,7 @@ class CategoriesController extends AppController
         $category = $this->Categories->newEntity();
         if ($this->request->is('post')) {
             $category = $this->Categories->patchEntity($category, $this->request->getData());
+            $category->user_id = $this->Auth->user('id');
             if ($this->Categories->save($category)) {
                 $this->Flash->success(__('The category has been saved.'));
 
@@ -66,7 +67,7 @@ class CategoriesController extends AppController
             }
             $this->Flash->error(__('The category could not be saved. Please, try again.'));
         }
-        $products = $this->Categories->Products->find('list', ['limit' => 200]);
+        $products = $this->Categories->Products->find('list', ['limit' => 200])->where(['user_id'=>$this->Auth->user('id')]);
         $this->set(compact('category', 'products'));
     }
 
@@ -114,4 +115,18 @@ class CategoriesController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+    public function search(){
+        $this->request->allowMethod("ajax");
+        $keyword = $this->request->data('keyword');
+
+        $query = $this->Categories->find('all',[
+            'conditions'=> ['name LIKE'=> '%'.$keyword.'%']
+        ]);
+        $this->set('query',$query);
+    }
+
+
+
+
 }

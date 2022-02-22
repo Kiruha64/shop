@@ -27,10 +27,12 @@ class TypecategoriesController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Categories'],
+            'contain' => ['Categories']
         ];
-        $typecategories = $this->paginate($this->Typecategories);
+//        $typecategories = $this->paginate($this->Typecategories);
+//        $typecategories = $this->Typecategories->find()->where(['user_id' => $this->Auth->user()['id']]);
 
+        $typecategories = $this->paginate($this->Typecategories->find('all')->where(['Typecategories.user_id'=> $this->Auth->user('id')]));
         $this->set(compact('typecategories'));
     }
 
@@ -60,6 +62,8 @@ class TypecategoriesController extends AppController
         $typecategory = $this->Typecategories->newEntity();
         if ($this->request->is('post')) {
             $typecategory = $this->Typecategories->patchEntity($typecategory, $this->request->getData());
+            $typecategory->user_id = $this->Auth->user('id');
+
             if ($this->Typecategories->save($typecategory)) {
                 $this->Flash->success(__('The typecategory has been saved.'));
 
@@ -67,7 +71,7 @@ class TypecategoriesController extends AppController
             }
             $this->Flash->error(__('The typecategory could not be saved. Please, try again.'));
         }
-        $categories = $this->Typecategories->Categories->find('list', ['limit' => 200]);
+        $categories = $this->Typecategories->Categories->find('list', ['limit' => 200])->where(['user_id'=>$this->Auth->user('id')]);
         $this->set(compact('typecategory', 'categories'));
     }
 

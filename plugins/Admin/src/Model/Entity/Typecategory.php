@@ -26,6 +26,9 @@ class Typecategory extends Entity
     protected $_accessible = [
         'name' => true,
         'category_id' => true,
-        'category' => true,
+        'products' => true,
+        'user_id' => true,
+
+
     ];
 }

@@ -74,6 +74,13 @@ class AppController extends Controller
         $this->loadModel('Admin.Categories');
         $menulists = $this->Categories->find('all');
         $this->set(compact('menulists'));
+
+        $this->loadModel('Admin.Shifts');
+        $statuses = $this->Shifts->find('all')->where(['user_id'=> $this->Auth->user('id')])->last();
+        if (isset($statuses)){
+            $status = $statuses->status;
+            $this->set('status',$status);
+        }
         /*
          * Enable the following component for recommended CakePHP security settings.
          * see https://book.cakephp.org/3/en/controllers/components/security.html
@@ -83,8 +90,14 @@ class AppController extends Controller
     public function beforeFilter(Event $event)
     {
         $this->Auth->deny(['index']);
+        $user_role = $this->Auth->user('role');
+        if ($user_role != ''){
+            $this->Auth->allow(['verification','search','logout',"login",'register','forgotpassword','resetpassword','index','add','view']);
+        }
+        if ($user_role == ''){
+            $this->Auth->allow(['verification',"login",'register','forgotpassword','resetpassword','index','view']);
+        }
 
-//        $this->Auth->allow(['verification','logout','register','forgotpassword','resetpassword','index','add','view']);
     }
 
     public function isAuthorized($user)
@@ -96,4 +109,6 @@ class AppController extends Controller
             return false;
         }
     }
+
+
 }

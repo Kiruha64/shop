@@ -31,16 +31,14 @@
         <div class="form-group">
         <? echo $this->Form->control('category_id', ['options' => $categories,'empty' => 'Choose','required','id'=>'category_id','class'=>'form-control form-group']); ?>
         </div>
+
         <div class="form-group typecategories-select">
-            <? echo $this->Form->control('typecategory_id',  ['type' => 'select','empty' => 'Choose', 'multiple' => false,'selected'=>'Your Value', 'options' => $typecategories,]); ?>
-            <?php if ($this->request->is('AjaX')){
-                echo 'aksdkasda';
-            }
-            else{
-                echo 'nit';
-            }
-            ?>
+            <label> Type Category</label>
+            <select id="typecategory_id"class="form-group form-control" name="typecategory_id" >
+
+            </select>
         </div>
+
         <div class="form-group">
             <label>Image</label>
         <?=  $this->Form->file('img',['required','class'=>'form-control form-group']);?>
@@ -56,35 +54,58 @@
 
 
 <?
-//$query = "SELECT * FROM `typecategories`";
-//$res = mysql_query($query);
-//echo '<script>
-//        var regions=[';
-//while($row = mysql_fetch_array($res))
-//{
-//    echo '{"region_name": "'.$row['region_name'].'",';
-//    echo '"region_code": "'.$row['region_code'].'",';
-//    echo '"value": "'.$row['value'].'"},';
-//}
-//echo '</script>';
+
 ?>
 
 <script>
 
-    $('#category_id').change(function(){
-        $('.typecategories-select').fadeIn('slow');
-        var category_id = $(this).val();
-        console.log(category_id);
-        $.ajax({
-            type: "post",
-            url: "<?= \Cake\Routing\Router::url(["controller"=>"Products","action"=>"add",'plugin'=>'admin']); ?>",
-            data: {category_id:category_id},
-            success: function(data){
-                console.log('AjaX Success')
-                // console.log(data)
-            },
-            error: function(){alert('AjaX Failed')}
+    $(document).ready(function (){
+        $('#category_id').change(function(){
+            var category_id = $(this).val();
+            console.log(category_id);
+            searchCategoriestype(category_id);
+            function searchCategoriestype(keyword){
+                var data = category_id;
+                $.ajax({
+                    type: "get",
+                    url: "<?= $this->Url->build(["controller"=>"Products","action"=>"search",'plugin'=>'admin']); ?>",
+                    data: {keyword:data},
+                    success: function(response)
+                    {
+                        $('#typecategory_id option').remove();
+                        $('#typecategory_id').append(response)
+                        $('.typecategories-select').fadeIn('slow');
+                    },
+                    error: function(){alert('AjaX Failed')}
+                });
+            }
         });
-    });
-
+    })
+    //$('document').ready(function(){
+    //    $('#category_id').change(function(){
+    //        var searchkey = $(this).val();
+    //        console.log(category_id);
+    //        searchCategories(searchkey);
+    //    });
+    //
+    //    function searchCategories(keyword){
+    //        var data = keyword;
+    //        console.log(data)
+    //        $.ajax({
+    //            method: 'get',
+    //            url : "<?//= $this->Url->build(["controller"=>"Products","action"=>"search",'plugin'=>'admin']); ?>//",
+    //            data: {keyword:data},
+    //            success: function(response)
+    //            {
+    //                $('.table').html(response);
+    //                console.log(data);
+    //                console.log(response);
+    //            }
+    //            // success: function()
+    //            // {
+    //            //     console.log(data);
+    //            // }
+    //        });
+    //    };
+    //});
 </script>

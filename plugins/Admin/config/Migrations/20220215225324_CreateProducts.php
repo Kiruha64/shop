@@ -30,7 +30,11 @@ class CreateProducts extends AbstractMigration
             'limit' => 11,
             'null' => false,
         ]);
-
+        $table->addColumn('user_id', 'integer', [
+            'default' => null,
+            'limit' => 11,
+            'null' => false,
+        ]);
         $table->addColumn('price', 'integer', [
             'default' => null,
             'null' => false,
@@ -57,8 +61,6 @@ class CreateProducts extends AbstractMigration
             'default' => null,
             'null' => false,
         ]);
-
-
         $table->create();
     }
 }

@@ -45,8 +45,7 @@
     <?= $this->Html->script('https://code.jquery.com/ui/1.12.1/jquery-ui.js') ?>
     <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js') ?>
 
-
-
+    <script src="../../../webroot/js/ajax.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -108,11 +107,12 @@
             <? endif;?>
             <? if ($user_role != ''):?>
                 <li><?= $this->Html->link('Profile',['controller'=>'Users','action'=>'profile',$user_id])?></li>
-            <? endif;?>
-
-            <? if ($user_role == 'owner'): ?>
                 <li><?= $this->Html->link('Admin',['controller'=>'Admin','action'=>'index'])?></li>
             <? endif;?>
+
+<!--            --><?// if ($user_role == 'owner'): ?>
+<!--                <li>--><?//= $this->Html->link('Admin',['controller'=>'Admin','action'=>'index'])?><!--</li>-->
+<!--            --><?// endif;?>
         </ul>
     </div>
 </nav>

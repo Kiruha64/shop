@@ -31,6 +31,7 @@
                 <input type="search" name="search" class="form-control">
                 <div class="input-group-prepend">
                     <button class="btn btn-primary input-group-text"type="submit">Search</button>
+<!--                    --><?//= $this->form->control('search')?>
                 </div>
             </div>
         </form>
@@ -70,3 +71,41 @@
 
 
 
+<script>
+    $(document).ready(function (){
+        $("#search").keyup(function (){
+            var searchkey = $(this).val();
+            searchCategories(searchkey);
+        })
+        function searchCategories(keyword){
+            var data = keyword;
+            $.ajax({
+                method:'get',
+                url: "<?= $this->Url->build(['controller'=>'categories','action'=>'search','plugin'=>'admin']); ?>" ,
+                data:keyword,
+                success: function (response){
+                    console.log(response)
+                },
+                error: function(){alert('AjaX Failed')}
+            })
+        }
+    })
+    //$(document).ready(function (){
+    //    $("#search").keyup(function (){
+    //        var searchkey = $(this).val();
+    //        searchCategories(searchkey);
+    //    })
+    //    function searchCategories(keyword){
+    //        $.ajax({
+    //            type: "get",
+    //            url: "<?//= $this->Url->build(["controller"=>"Products","action"=>"index",'plugin'=>'admin']); ?>//",
+    //            data: keyword,
+    //            success: function(data,response){
+    //                console.log('AjaX Success');
+    //                console.log(response);
+    //            },
+    //            error: function(){alert('AjaX Failed')}
+    //        });
+    //    };
+    //})
+</script>

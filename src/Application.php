@@ -34,6 +34,8 @@ class Application extends BaseApplication
      */
     public function bootstrap()
     {
+        $this->addPlugin('Manager');
+
         $this->addPlugin('Admin');
 
         $this->addPlugin('Admin');

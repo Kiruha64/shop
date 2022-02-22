@@ -1,7 +1,7 @@
 <?php
 use Migrations\AbstractMigration;
 
-class CreateTypecategories extends AbstractMigration
+class CreateTeams extends AbstractMigration
 {
     /**
      * Change Method.
@@ -12,14 +12,13 @@ class CreateTypecategories extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('typecategories');
+        $table = $this->table('teams');
         $table->addColumn('name', 'string', [
             'default' => null,
             'limit' => 255,
             'null' => false,
         ]);
-
-        $table->addColumn('category_id', 'integer', [
+        $table->addColumn('user_id', 'integer', [
             'default' => null,
             'limit' => 11,
             'null' => false,

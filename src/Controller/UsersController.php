@@ -63,6 +63,8 @@ class UsersController extends AppController
             $user->name = $username;
             $user->role = 'user';
             $user->email = $useremail;
+            $user->img_name = 'user-default.jpg';
+            $user->verified = "0";
             $user->password = $userpass;
             $user->token = $usertoken;
             $user->img_path = 'upload/user-default.jpg';
@@ -71,33 +73,34 @@ class UsersController extends AppController
             $user->created = date('Y-m-d H:i:s');
             $user->modified= date('Y-m-d H:i:s');
 
+            $userTable->save($user);
 
 
-            if ($userTable->save($user)){
-                $this->Flash->set('Successful registry!' ,['element'=>'success']);
-
-
-                Email::configTransport('mailtrap', [
-                    'host' => 'smtp.mailtrap.io',
-                    'port' => 2525,
-                    'username' => 'dbc651ae35924b',
-                    'password' => '88b3e51b5d131d',
-                    'className' => 'Smtp'
-                ]);
-                $email = new Email('default');
-                $email->transport('mailtrap');
-                $email->emailFormat('html');
-                $email->from('topsinpw@gmail.com', 'Kiruha64');
-                $email->subject('Confirm your email to activation your account');
-                $email->to($useremail);
-                $email->send('hello '.$username. '<br> Pleas click here to conform your account<br/>
-                <a href="http://myproj/users/verification/'.$usertoken.'">Verificate</a>
-                <br>Thank you<br/>');
-
-            }
-            else{
-                $this->Flash->set('Error registry!',['element'=>'error']);
-            }
+//            if ($userTable->save($user)){
+//                $this->Flash->set('Successful registry!' ,['element'=>'success']);
+//
+//
+//                Email::configTransport('mailtrap', [
+//                    'host' => 'smtp.mailtrap.io',
+//                    'port' => 2525,
+//                    'username' => 'dbc651ae35924b',
+//                    'password' => '88b3e51b5d131d',
+//                    'className' => 'Smtp'
+//                ]);
+//                $email = new Email('default');
+//                $email->transport('mailtrap');
+//                $email->emailFormat('html');
+//                $email->from('topsinpw@gmail.com', 'Kiruha64');
+//                $email->subject('Confirm your email to activation your account');
+//                $email->to($useremail);
+//                $email->send('hello '.$username. '<br> Pleas click here to conform your account<br/>
+//                <a href="http://myproj/users/verification/'.$usertoken.'">Verificate</a>
+//                <br>Thank you<br/>');
+//
+//            }
+//            else{
+//                $this->Flash->set('Error registry!',['element'=>'error']);
+//            }
 
         }
     }

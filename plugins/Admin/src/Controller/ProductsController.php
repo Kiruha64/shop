@@ -2,6 +2,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\AppController;
+use Admin\Model\Entity\Product;
 use Cake\Utility\Security;
 
 /**
@@ -28,26 +29,6 @@ class ProductsController extends AppController
 
 
     }
-
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['Categories'],
-        ];
-        $products = $this->paginate($this->Products);
-
-        $this->set(compact('products'));
-
-        if($this->request->is('Ajax')) //Ajax Detection
-        {
-            $this->autoRender = false; // Set Render False
-            $this->response->body('Success');
-            return $this->response;
-        }
-
-
-    }
-
     /**
      * View method
      *
@@ -63,12 +44,27 @@ class ProductsController extends AppController
 
         $this->set('product', $product);
 
-        if($this->request->is('Ajax')) //Ajax Detection
-        {
-            $this->autoRender = false; // Set Render False
-            $this->response->body('Success');
-            return $this->response;
-        }
+//        if($this->request->is('Ajax')) //Ajax Detection
+//        {
+//            $this->autoRender = false; // Set Render False
+//            $this->response->body('Success');
+//            return $this->response;
+//        }
+    }
+
+
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['Categories','Typecategories']
+        ];
+
+//        $products = $this->Products->find()->where(['user_id' => $this->Auth->user()['id']]);
+
+        $products = $this->paginate($this->Products->find('all')->where(['Products.user_id'=> $this->Auth->user('id')]));
+        //        $products = $this->paginate($this->Products);
+        $this->set(compact('products'));
+
     }
 
     /**
@@ -76,11 +72,19 @@ class ProductsController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
+
     public function add()
     {
+//        $this->autoRender = $this->layout = false;
+
+
+
+
         $product = $this->Products->newEntity();
+
         if ($this->request->is('post')) {
             $product = $this->Products->patchEntity($product, $this->request->getData());
+            $product->user_id = $this->Auth->user('id');
 
             $imgname = $this->request->getData()['img']['name'];
             $imgtmp = $this->request->getData()['img']['tmp_name'];
@@ -91,7 +95,7 @@ class ProductsController extends AppController
             $product->img_path = $imgpath;
             $product->isset = '1';
 
-            if ($this->Products->save($product) and move_uploaded_file($imgtmp, WWW_ROOT . $imgpath) ) {
+            if ($this->Products->save($product) and move_uploaded_file($imgtmp, WWW_ROOT . $imgpath)) {
 
                 $this->Flash->success(__('The product has been saved.'));
 
@@ -101,48 +105,17 @@ class ProductsController extends AppController
             }
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
-        $categories = $this->Products->Categories->find('list');
+        $categories = $this->Products->Categories->find('list')->where(['user_id'=>$this->Auth->user('id')]);
 
-        $this->loadModel('Categories');
-        $this->loadModel('Typecategories');
-        $typecategories = $this->Categories->Typecategories->find('list')->where(['category_id'=> '']);
+//        $typecategories = $this->Categories->Typecategories->find('list')->where(['category_id'=> '']);
 
-        $this->set(compact('product', 'categories','typecategories'));
+        $this->set(compact('product', 'categories'));
 
 
-//        if ($this->request->is('post')){
-//            $a = 'ajax success';
-//            echo $a;
-//        }
-//        if ($this->request->is('put')){
-//            $a = 'ajax success';
-//            echo $a;
-//            echo exit;
-//        }
-//        if ($this->request->is('ajax')) {
-//            $a = 'ajax success';
-//            echo $a;
-//            echo exit;
-//
-//        }
-//        else{
-//            echo $value = $this->request->getData('category_id');
-//            echo $value;
-//            $a = 'a';
-//            echo $a;
-//        }
-//        if ($this->request->is('json')){
-//            $a = 'ajax success';
-//            echo $a;
-//            echo exit;
-//        }
-////        $this->request->allowMethod('ajax');
-
-
-//            $category_id =$this->request->getData('category_id');
-//            debug($category_id);
 
     }
+
+
 
     /**
      * Edit method
@@ -178,7 +151,7 @@ class ProductsController extends AppController
             }
             $this->Flash->error(__('Ошибка обновления вашей статьи.'));
         }
-        $categories = $this->Products->Categories->find('list', ['limit' => 200]);
+        $categories = $this->Products->Categories->find('list', ['limit' => 200])->where(['user_id'=>$this->Auth->user('id')]);
         $this->set(compact('product', 'categories'));
     }
 
@@ -200,6 +173,24 @@ class ProductsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function search(){
+//        $this->request->allowMethod('ajax');
+        $this->loadModel("Typecategories");
+        $keyword = $this->request->getQuery('keyword');
+
+        $query = $this->Typecategories->find('all',[
+            'conditions' => ['category_id'=>$keyword]
+        ])->where(['user_id'=>$this->Auth->user('id')]);
+        $this->set('keyword',$keyword);
+        $this->set('typecategories',$query);
+
+        $this->viewBuilder()->setLayout('');
+
+
+
+//        $this->set('products', $query);
     }
 
 }

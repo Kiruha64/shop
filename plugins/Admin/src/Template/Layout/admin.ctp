@@ -25,12 +25,6 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <?= $this->Html->script('https://code.jquery.com/ui/1.12.1/jquery-ui.js') ?>
-    <?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js') ?>
-
-
-
-
 </head>
 <body>
 <style>
@@ -321,7 +315,13 @@
     .typecategories-select{
         display: none;
     }
+    iframe {
+        display: none;
+    }
+
 </style>
+
+<?// if ($user_role == 'user'):?>
 
 <div id="wrapper"style="padding-bottom: 30px">
     <div class="overlay"></div>
@@ -335,6 +335,9 @@
                 </a>
             </li>
             <li>
+                <?= $this->Html->link('Shifts',['controller'=>'Shifts','action'=>'index'])?>
+            </li>
+            <li>
                 <?= $this->Html->link('Products',['controller'=>'Products','action'=>'index'])?>
             </li>
             <li>
@@ -343,9 +346,17 @@
             <li>
                 <?= $this->Html->link('Type Categories',['controller'=>'Typecategories','action'=>'index'])?>
             </li>
+
+            <? if ($user_role == 'owner'):?>
             <li>
                 <?= $this->Html->link('Users',['controller'=>'Users','action'=>'index'])?>
             </li>
+            <? endif; ?>
+
+            <li>
+                <?= $this->Html->link('Teams',['controller'=>'Teams','action'=>'index'])?>
+            </li>
+
 <!--            <li class="dropdown">-->
 <!--                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Works <span class="caret"></span></a>-->
 <!--                <ul class="dropdown-menu" role="menu">-->
@@ -376,10 +387,10 @@
         <div class="container-fluid">
             <div class="col-md-3">
                 <h3><?=  $title ?></h3>
-                <? if ($this->request->getParam('action') != 'index'):?>
-                <h6><?= $this->Html->link($title.' list',['controller'=>$title,'action'=>'index'])?></h6>
-                <h6><?= $this->Html->link('Add '.$title,['controller'=>$title,'action'=>'add'])?></h6>
-                <?endif;?>
+<!--                --><?// if ($this->request->getParam('action') != 'index'):?>
+<!--                <h6>--><?//= $this->Html->link($title.' list',['controller'=>$title,'action'=>'index'])?><!--</h6>-->
+<!--                <h6>--><?//= $this->Html->link('Add '.$title,['controller'=>$title,'action'=>'add'])?><!--</h6>-->
+<!--                --><?//endif;?>
 
             </div>
             <?= $this->Flash->render() ?>
@@ -396,12 +407,34 @@
 <!-- /#wrapper -->
 
 
-
+<?// endif;?>
 </body>
-</html>
 
+<?= $this->Html->script('https://code.jquery.com/ui/1.12.1/jquery-ui.js') ?>
+<?= $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js') ?>
 
 <script>
+
+
+    // console.log('asd')
+    // $('#category_id').change(function(){
+    //     $('.city-select').fadeIn('slow');
+    //     $.ajax({
+    //         url:"",
+    //         method:'post',
+    //         data: {category_id: $(this).val()},
+    //         success: function(data){
+    //             console.log()
+    //         }
+    //     })
+    //
+    // });
+
+    //var targetUrlOnCountryChange = <?//= Router::url(["controller"=>"homes","action"=>"getStates"]); ?>
+
+
+
+
     $(document).ready(function () {
         var trigger = $('.hamburger'),
             overlay = $('.overlay'),
@@ -431,27 +464,90 @@
         });
     });
 
-    // console.log('asd')
-    // $('#category_id').change(function(){
-    //     $('.city-select').fadeIn('slow');
-    //     $.ajax({
-    //         url:"",
-    //         method:'post',
-    //         data: {category_id: $(this).val()},
-    //         success: function(data){
-    //             console.log()
-    //         }
-    //     })
-    //
-    // });
-
-    //var targetUrlOnCountryChange = <?//= Router::url(["controller"=>"homes","action"=>"getStates"]); ?>
-
-
-
-
-
-
 
 </script>
 
+<script src="../../../webroot/js/ajax.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        alert(localStorage.getItem('seconds'));
+        var sec = localStorage.getItem('seconds');
+        function counter() {
+            $("#seconds").html(pad(++sec % 60));
+            $("#minutes").html(pad(parseInt(sec / 60, 10)));
+            $("#hours").html(pad(parseInt(sec / 3600, 10)));
+            localStorage.setItem('seconds',sec);
+        }
+        function pad(val) {
+            return val > 9 ? val : +val;
+        }
+
+        <? if (isset($status) && $status == 0):?>
+        $('#stop').fadeIn('slow');
+        timer = setInterval(counter, 1000);
+        $('#finish').fadeIn('slow');
+        $('#start_block').fadeOut('slow');
+        <? endif;?>
+
+
+        // var timer;
+
+        $('#start').click(function () {
+            $.ajax({
+                type: "post",
+                url: "<?= $this->Url->build(["controller" => "Shifts", "action" => "start", 'plugin' => 'admin']); ?>",
+                data: 1,
+                success: function () {
+                },
+                error: function () {
+                    alert('AjaX Failed')
+                }
+            });
+            location.reload();
+
+
+        });
+        $('#finish').click(function () {
+            clearInterval(timer);
+            var hours = $('#hours').html();
+            var minutes = $('#minutes').html();
+            var seconds = $('#seconds').html()
+            var alltime = (seconds / 3600) + (minutes / 60) + hours;
+            console.log(alltime);
+
+            $('#stop').removeClass('stopped');
+
+            sec = 0;
+            counter();
+
+
+            $('#stop').fadeOut('slow');
+            $('#finish').fadeOut('slow');
+            $('#start_block').fadeIn('slow');
+
+            SendTime(alltime);
+
+            function SendTime(time) {
+                var data = alltime;
+                $.ajax({
+                    type: "post",
+                    url: "<?= $this->Url->build(["controller" => "Shifts", "action" => "finish", 'plugin' => 'admin']); ?>",
+                    data: {time: data},
+                    success: function () {
+                    },
+                    error: function () {
+                        alert('AjaX Failed')
+                    }
+                });
+            };
+            location.reload();
+
+
+        });
+    });
+
+</script>
+
+</html>
