@@ -17,12 +17,15 @@ class HomeController extends AppController
 
     public function index()
     {
+
     }
 
     public function categories($id = null){
 
         $products = $this->Products->find('all')->where(['category_id'=>$id, 'isset'=>'1']);
         $this->set('products', $products);
+
+
 
         if ($this->request->is('ajax')){
             $a = 'asdasddsadsa';
